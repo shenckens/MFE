@@ -40,6 +40,8 @@ def make_pose_json(intrinsic_matrix, extrinsic_matrix, width, height, img_idx, p
     '''3x3, 4x4, img_widht, img_height, pose_idx, path to o3d_parameters
     json file for each pose in a scene.
     '''
+    # if os.path.isfile(os.path.join(path, '{}.json'.format(img_idx))):
+    #     return 0
     intrinsic_matrix[0][2] = width / 2 - 0.5
     intrinsic_matrix[1][2] = height / 2 - 0.5
     f = get_json_template()
