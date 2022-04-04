@@ -14,6 +14,12 @@ def load_recon_mesh_for_testing(scene):
     return recon_mesh
 
 
+def load_recon_pcd_for_testing(scene):
+    recon_pcd = o3d.io.read_point_cloud(
+        f'./{scene}.ply')  # Read the reconstructed pcd
+    return recon_pcd
+
+
 def get_json_template():
     template = {
                   "class_name": "PinholeCameraParameters",
@@ -72,6 +78,7 @@ def render_depth_img(pcd, parameter_file, img_idx, path):
 
 def noisy_depth(scene):
     mesh = load_recon_mesh_for_testing(scene)  # Load mesh for testing
+    pcd = load_recon_pcd_for_testing(scene)  # Load pcd for testing
     scene_path = os.path.join(PATH, scene)
     scene_info = dict(np.loadtxt(
         f'{os.path.join(scene_path, scene)}.txt', delimiter=' = ', dtype=dict))
@@ -81,6 +88,9 @@ def noisy_depth(scene):
     noisy_depth_path = os.path.join(scene_path, 'noisy_depth')
     if not os.path.exists(noisy_depth_path):
         os.makedirs(noisy_depth_path)
+    noisy_pcd_path = os.path.join(scene_path, 'noisy_pcd')
+    if not os.path.exists(noisy_pcd_path):
+        os.makedirs(noisy_pcd_path)
     n_poses = int(scene_info['numDepthFrames'])
     width = int(scene_info['depthWidth'])
     height = int(scene_info['depthHeight'])
@@ -93,6 +103,8 @@ def noisy_depth(scene):
                        width, height, n, json_path)
         render_depth_img(mesh, os.path.join(
             json_path, '{}.json'.format(n)), n, noisy_depth_path)
+        render_depth_img(pcd, os.path.join(
+            json_path, '{}.json'.format(n)), n, noisy_pcd_path)
     pass
 
 
