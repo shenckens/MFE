@@ -40,8 +40,6 @@ def make_pose_json(intrinsic_matrix, extrinsic_matrix, width, height, img_idx, p
     '''3x3, 4x4, img_widht, img_height, pose_idx, path to o3d_parameters
     json file for each pose in a scene.
     '''
-    # if os.path.isfile(os.path.join(path, '{}.json'.format(img_idx))):
-    #     return 0
     intrinsic_matrix[0][2] = width / 2 - 0.5
     intrinsic_matrix[1][2] = height / 2 - 0.5
     f = get_json_template()
@@ -78,7 +76,7 @@ def render_depth_img(pcd, parameter_file, img_idx, path):
     pass
 
 
-def noisy_depth(scene):
+def make_noisy_depth(scene):
     mesh = load_recon_mesh_for_testing(scene)  # Load mesh for testing
     pcd = load_recon_pcd_for_testing(scene)  # Load pcd for testing
     scene_path = os.path.join(PATH, scene)
@@ -99,14 +97,19 @@ def noisy_depth(scene):
     intrinsic_matrix = np.genfromtxt(os.path.join(
         scene_path, 'intrinsic/intrinsic_depth.txt'))
     for n in range(n_poses):
-        extrinsic_matrix = np.genfromtxt(os.path.join(
-            scene_path, 'pose', '{}.txt'.format(n)))
-        make_pose_json(intrinsic_matrix, extrinsic_matrix,
-                       width, height, n, json_path)
-        render_depth_img(mesh, os.path.join(
-            json_path, '{}.json'.format(n)), n, noisy_depth_path)
-        render_depth_img(pcd, os.path.join(
-            json_path, '{}.json'.format(n)), n, noisy_pcd_path)
+        # Check if index exists in folder.
+        if os.path.isfile(os.path.join(scene_path, 'pose', '{}.txt'.format(n))):
+            extrinsic_matrix = np.genfromtxt(os.path.join(
+                scene_path, 'pose', '{}.txt'.format(n)))
+            make_pose_json(intrinsic_matrix, extrinsic_matrix,
+                           width, height, n, json_path)
+            render_depth_img(mesh, os.path.join(
+                json_path, '{}.json'.format(n)), n, noisy_depth_path)
+            render_depth_img(pcd, os.path.join(
+                json_path, '{}.json'.format(n)), n, noisy_pcd_path)
+        else:
+            print(
+                f"File {os.path.join(scene_path, 'pose', '{}.txt'.format(n))} does not exist.")
     pass
 
 
@@ -114,6 +117,6 @@ if __name__ == "__main__":
     all_scenes = sorted([s for s in os.listdir(PATH) if not s.startswith('.')])
 
     for scene in all_scenes:
-        noisy_depth(scene)
+        make_noisy_depth(scene)
 
         break
