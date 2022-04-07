@@ -5,18 +5,19 @@ import os
 import json
 import scene_utils
 
-PATH = './data/scannet/scans_test'  # put in config at later stage
+PATH = '/project/henckens/data/scannet/scans_test'  # put in config at later stage
+RECONPATH = '~/NeuralRecon/results/scene_scannet_checkpoints_fusion_eval_47'
 
 
-def load_recon_mesh_for_testing(scene):
+def load_recon_mesh(scene):
     recon_mesh = o3d.io.read_triangle_mesh(
-        f'./{scene}.ply')  # Read the reconstructed mesh
+        os.path.join(RECONPATH, '{}.ply'.format(scene)))  # Read the reconstructed mesh
     return recon_mesh
 
 
-def load_recon_pcd_for_testing(scene):
+def load_recon_pcd(scene):
     recon_pcd = o3d.io.read_point_cloud(
-        f'./{scene}.ply')  # Read the reconstructed pcd
+        os.path.join(RECONPATH, '{}.ply'.format(scene)))  # Read the reconstructed pcd
     return recon_pcd
 
 
@@ -66,6 +67,7 @@ def render_depth_img(pcd, parameter_file, img_idx, path):
     ctr = vis.get_view_control()
     vis.add_geometry(pcd)
     ctr.convert_from_pinhole_camera_parameters(param)
+    # check for offscreen rendering
 #     depth = vis.capture_depth_float_buffer(False)
 #     plt.imsave('{}.png'.format("testdepth_1"), np.asarray(depth), cmap='gray')
 
@@ -77,8 +79,8 @@ def render_depth_img(pcd, parameter_file, img_idx, path):
 
 
 def make_noisy_depth(scene):
-    mesh = load_recon_mesh_for_testing(scene)  # Load mesh for testing
-    pcd = load_recon_pcd_for_testing(scene)  # Load pcd for testing
+    mesh = load_recon_mesh(scene)
+    pcd = load_recon_pcd(scene)
     scene_path = os.path.join(PATH, scene)
     scene_info = dict(np.loadtxt(
         f'{os.path.join(scene_path, scene)}.txt', delimiter=' = ', dtype=dict))
@@ -114,9 +116,9 @@ def make_noisy_depth(scene):
 
 
 if __name__ == "__main__":
+
     all_scenes = sorted([s for s in os.listdir(PATH) if not s.startswith('.')])
 
-    for scene in all_scenes:
+    for i, scene in enumerate(all_scenes):
         make_noisy_depth(scene)
-
-        break
+        print(f'Done with {scene} ({i+1}/{len(all_scenes)})')
