@@ -6,7 +6,7 @@ import json
 # import scene_utils
 
 PATH = '/project/henckens/data/scannet/scans_test'  # put in config at later stage
-RECONPATH = '~/NeuralRecon/results/scene_scannet_checkpoints_fusion_eval_47'
+RECONPATH = './results/scene_scannet_checkpoints_fusion_eval_47'
 
 
 def load_recon_mesh(scene):
