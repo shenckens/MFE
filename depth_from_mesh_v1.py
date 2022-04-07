@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import json
-import scene_utils
+# import scene_utils
 
 PATH = '/project/henckens/data/scannet/scans_test'  # put in config at later stage
 RECONPATH = '~/NeuralRecon/results/scene_scannet_checkpoints_fusion_eval_47'
