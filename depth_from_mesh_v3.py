@@ -100,6 +100,16 @@ def render_depth_img(pcd, parameter_file, img_idx, path):
     pass
 
 
+def headless_render(mesh, width, height, intrinsics, extrinsics):
+    '''o3dmesh img_widht img_height img_index save_path'''
+    renderer = o3d.visualization.rendering.OffscreenRenderer(
+        width=width, height=height, headless=True)
+    renderer.scene.add_geometry(mesh)
+    renderer.setup_camera(intrinsics, extrinsics, width, height)
+    depth = renderer.render_to_depth_image()
+    return depth
+
+
 def make_noisy_depth(scene):
     mesh = load_recon_mesh(scene)
     pcd = load_recon_pcd(scene)
@@ -115,9 +125,6 @@ def make_noisy_depth(scene):
     noisy_pcd_path = os.path.join(scene_path, 'noisy_pcd')
     if not os.path.exists(noisy_pcd_path):
         os.makedirs(noisy_pcd_path)
-    pyrender_path = os.path.join(scene_path, 'pyrender')
-    if not os.path.exists(pyrender_path):
-        os.makedirs(pyrender_path)
     n_poses = int(scene_info['numDepthFrames'])
     width = int(scene_info['depthWidth'])
     height = int(scene_info['depthHeight'])
@@ -130,11 +137,14 @@ def make_noisy_depth(scene):
                 scene_path, 'pose', '{}.txt'.format(n)))
             make_pose_json(intrinsic_matrix, extrinsic_matrix,
                            width, height, n, json_path)
-            render_depth_img(mesh, os.path.join(
-                json_path, '{}.json'.format(n)), n, noisy_depth_path)
-            render_depth_img(pcd, os.path.join(
-                json_path, '{}.json'.format(n)), n, noisy_pcd_path)
-
+            # render_depth_img(mesh, os.path.join(
+            #     json_path, '{}.json'.format(n)), n, noisy_depth_path)
+            # render_depth_img(pcd, os.path.join(
+            #     json_path, '{}.json'.format(n)), n, noisy_pcd_path)
+            depth = headless_render(
+                mesh, width, height, intrinsic_matrix, extrinsic_matrix)
+            plt.imsave(os.path.join(noisy_depth_path,
+                                    '{}.png'.format(n)), np.asarray(depth))
         else:
             print(
                 f"File {os.path.join(scene_path, 'pose', '{}.txt'.format(n))} does not exist.")
