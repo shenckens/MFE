@@ -9,9 +9,9 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 
-class ScanNetDataset(Dataset):
+class ScanNetWithNoisyDepth(Dataset):
     def __init__(self, datapath, mode, transforms, nviews, n_scales):
-        super(ScanNetDataset, self).__init__()
+        super(ScanNetWithNoisyDepth, self).__init__()
         self.datapath = datapath
         self.mode = mode
         self.n_views = nviews
@@ -58,6 +58,14 @@ class ScanNetDataset(Dataset):
         depth_im[depth_im > 3.0] = 0
         return depth_im
 
+    def read_noisy_depth(self, filepath):
+        # Read depth image and camera pose
+        depth_im = cv2.imread(filepath, -1).astype(
+            np.float32)
+        depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
+        depth_im[depth_im > 3.0] = 0
+        return depth_im
+
     def read_scene_volumes(self, data_path, scene):
         if scene not in self.tsdf_cashe.keys():
             if len(self.tsdf_cashe) > self.max_cashe:
@@ -76,6 +84,7 @@ class ScanNetDataset(Dataset):
 
         imgs = []
         depth = []
+        noisy_depth = []
         extrinsics_list = []
         intrinsics_list = []
 
@@ -106,6 +115,7 @@ class ScanNetDataset(Dataset):
         items = {
             'imgs': imgs,
             'depth': depth,
+            'noisy_depth': noisy_depth,
             'intrinsics': intrinsics,
             'extrinsics': extrinsics,
             'tsdf_list_full': tsdf_list,
