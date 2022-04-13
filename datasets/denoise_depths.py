@@ -18,7 +18,7 @@ class DenoiseDepths(Dataset):
         self.all_imgs = self.build_list()
 
     def build_list(self):
-        print(f'Building list of images.\nThis can take a while...')
+        print(f'Building list of images...')
         all_imgs = []
         path = os.path.join(self.datapath, self.source_path)
         all_scenes = sorted(

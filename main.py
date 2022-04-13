@@ -16,4 +16,9 @@ for noisy, gt in testdataloader:
     print(noisy)
     print(gt.shape)
     print(gt)
+    plt.subplot(1, 2, 1)
+    plt.imshow(noisy[0])
+    plt.subplot(1, 2, 2)
+    plt.imshow(gt[0])
+    plt.show()
     break
