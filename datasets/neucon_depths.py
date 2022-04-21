@@ -3,11 +3,12 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
+import PIL
 
 
-class DenoiseDepths(Dataset):
+class NeuconDepths(Dataset):
     def __init__(self, datapath, mode):
-        super(DenoiseDepths, self).__init__()
+        super(NeuconDepths, self).__init__()
         self.datapath = datapath
         self.mode = mode
         assert self.mode in ['train', 'val', 'test']
@@ -28,9 +29,10 @@ class DenoiseDepths(Dataset):
             n_poses = len(os.listdir(os.path.join(
                 path, scene, 'pose')))
             for n in range(n_poses):
-                if os.path.isfile(os.path.join(path, scene, 'noisy_depth', '{}.png'.format(n))):
+                if os.path.isfile(os.path.join(path, scene, 'recon_depth', '{}.png'.format(n))):
                     idxs = scene, n
                     all_imgs.append(idxs)
+            break
         return all_imgs
 
     def __len__(self):
@@ -39,8 +41,8 @@ class DenoiseDepths(Dataset):
     def __getitem__(self, idx):
         path = os.path.join(self.datapath, self.source_path)
         scene, n = self.all_imgs[idx]
-        noisy_depth = np.asarray(plt.imread(os.path.join(
-            path, scene, 'noisy_depth', '{}.png'.format(n))))
-        gt_depth = np.asarray(plt.imread(os.path.join(
-            path, scene, 'depth', '{}.png'.format(n))))
-        return noisy_depth, gt_depth
+        recon_depth = np.load(os.path.join(
+            path, scene, 'recon_depth', '{}.npy'.format(n))) / 3
+        gt_depth = np.asarray(PIL.Image.open(os.path.join(
+            path, scene, 'depth', '{}.png'.format(n)))) / 3000
+        return recon_depth, gt_depth

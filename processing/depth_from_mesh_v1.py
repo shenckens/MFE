@@ -1,10 +1,11 @@
 import trimesh
-import pyrender
+# import pyrender
 import json
 import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+os.environ['PYOPENGL_PLATFORM'] = 'egl'
 # # for no screen rendering
 # os.environ['PYOPENGL_PLATFORM'] = 'egl'
 # import scene_utils
@@ -12,7 +13,7 @@ import os
 PATH = '/project/henckens/data/scannet/scans_test'  # put in config at later stage
 RECONPATH = './results/scene_scannet_checkpoints_fusion_eval_47'
 
-# PATH = './Desktop/data/scannet/scans_test'
+# PATH = './Desktop/data/scans_test'
 # RECONPATH = './Desktop'
 
 

@@ -76,37 +76,18 @@ def make_pose_json(intrinsic_matrix, extrinsic_matrix, width, height, img_idx, p
     pass
 
 
-def render_depth_img(pcd, parameter_file, img_idx, path):
-    param = o3d.io.read_pinhole_camera_parameters(parameter_file)
-    f = open(parameter_file)
-    file = json.load(f)
-    width = file["intrinsic"]["width"]
-    height = file["intrinsic"]["height"]
-    vis = o3d.visualization.Visualizer()
-    vis.create_window(width=param.intrinsic.width,
-                      height=param.intrinsic.height,
-                      visible=False)
-    ctr = vis.get_view_control()
-    vis.add_geometry(pcd)
-    ctr.convert_from_pinhole_camera_parameters(param)
-    # check for offscreen rendering
-#     depth = vis.capture_depth_float_buffer(False)
-#     plt.imsave('{}.png'.format("testdepth_1"), np.asarray(depth), cmap='gray')
-
-    vis.capture_depth_image(os.path.join(
-        path, '{}.png'.format(img_idx)), do_render=True)
-#     vis.run()
-#     vis.destroy_window()
-    pass
-
-
 def headless_render(mesh, width, height, intrinsics, extrinsics):
     '''o3dmesh img_widht img_height img_index save_path'''
     renderer = o3d.visualization.rendering.OffscreenRenderer(
         width=width, height=height, headless=True)
-    renderer.scene.add_geometry(mesh)
-    renderer.setup_camera(intrinsics, extrinsics, width, height)
-    depth = renderer.render_to_depth_image()
+    renderer.scene.add_model('mesh', mesh)
+
+    pinhole = o3d.camera.PinholeCameraIntrinsic(
+        width, height, fx=intrinsics[0, 0], fy=intrinsics[1, 1], cx=width / 2 - 0.5, cy=height / 2 - 0.5)
+
+    renderer.setup_camera(pinhole, extrinsics)
+
+    depth = renderer.render_to_depth_image(z_in_view_space=True)
     return depth
 
 
@@ -130,21 +111,22 @@ def make_noisy_depth(scene):
     height = int(scene_info['depthHeight'])
     intrinsic_matrix = np.genfromtxt(os.path.join(
         scene_path, 'intrinsic/intrinsic_depth.txt'))
+    intrinsic_matrix[0][2] = width / 2 - 0.5
+    intrinsic_matrix[1][2] = height / 2 - 0.5
     for n in range(n_poses):
         # Check if index exists in folder.
         if os.path.isfile(os.path.join(scene_path, 'pose', '{}.txt'.format(n))):
             extrinsic_matrix = np.genfromtxt(os.path.join(
                 scene_path, 'pose', '{}.txt'.format(n)))
-            make_pose_json(intrinsic_matrix, extrinsic_matrix,
-                           width, height, n, json_path)
-            # render_depth_img(mesh, os.path.join(
-            #     json_path, '{}.json'.format(n)), n, noisy_depth_path)
-            # render_depth_img(pcd, os.path.join(
-            #     json_path, '{}.json'.format(n)), n, noisy_pcd_path)
-            depth = headless_render(
-                mesh, width, height, intrinsic_matrix, extrinsic_matrix)
-            plt.imsave(os.path.join(noisy_depth_path,
-                                    '{}.png'.format(n)), np.asarray(depth))
+            if np.isfinite(extrinsic_matrix).all():
+                make_pose_json(intrinsic_matrix, extrinsic_matrix,
+                               width, height, n, json_path)
+                depth = headless_render(
+                    mesh, width, height, intrinsic_matrix[:3, :3], extrinsic_matrix)
+                plt.imsave(os.path.join(noisy_depth_path,
+                                        '{}.png'.format(n)), depth)
+            else:
+                print(f'{scene}/pose/{n}.txt contains an invalid pose matrix.')
         else:
             print(
                 f"File {os.path.join(scene_path, 'pose', '{}.txt'.format(n))} does not exist.")

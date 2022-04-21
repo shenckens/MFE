@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.init as init
 
-from network_module import *
+from deepfillv2_modules import *
 
 
 def weights_init(net, init_type='kaiming', init_gain=0.02):

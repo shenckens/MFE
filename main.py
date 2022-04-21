@@ -4,10 +4,10 @@ import numpy as np
 import torch
 import PIL
 import matplotlib.pyplot as plt
-from datasets.denoise_depths import DenoiseDepths
+from datasets.neucon_depths import NeuconDepths
 from torch.utils.data import DataLoader
 
-testset = DenoiseDepths('./Desktop/data', 'test')
+testset = NeuconDepths('./Desktop/data', 'test')
 print(len(testset))
 testdataloader = DataLoader(testset, batch_size=1, shuffle=True)
 
