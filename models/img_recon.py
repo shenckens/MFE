@@ -8,11 +8,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Encoder(nn.Module):
 
-    def __init__(self,
-                 num_input_channels: int,
-                 base_channel_size: int,
-                 latent_dim: int,
-                 act_fn: object = nn.ReLu):
+    def __init__(self, input_channels: int, base_channel_size: int, output_dim: int, act_fn: object = nn.ReLu, stride=1):
         """
         Inputs:
             - num_input_channels : Number of input channels of the image. For depth imgs, this parameter is 1
@@ -23,10 +19,10 @@ class Encoder(nn.Module):
         super().__init__()
         c_hid = base_channel_size
         self.encoder = nn.Sequential(
-            nn.Conv2d(num_input_channels, c_hid, kernel_size=5,
-                      padding=3, stride=2),  # 640x480 => 320x160
+            nn.Conv2d(input_channels, c_hid, kernel_size=3,
+                      padding=1, stride=1),  # 640x480 => 640x480
             act_fn(),
-            nn.Conv2d(c_hid, c_hid, kernel_size=3, padding=1),
+            nn.Conv2d(c_hid, c_hid, kernel_size=3, padding=1, stride=1),
             act_fn(),
             nn.Conv2d(c_hid, 2*c_hid, kernel_size=5),  # 320x160 => 8x8
             act_fn(),
@@ -35,7 +31,7 @@ class Encoder(nn.Module):
             nn.Conv2d(2*c_hid, 2*c_hid, kernel_size=5),  # 8x8 => 4x4
             act_fn(),
             nn.Flatten(),  # Image grid to single feature vector
-            nn.Linear(4*4*2*c_hid, latent_dim)
+            nn.Linear(4*4*2*c_hid, output_dim)
         )
 
     def forward(self, x):

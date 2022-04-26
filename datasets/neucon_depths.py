@@ -32,7 +32,7 @@ class NeuconDepths(Dataset):
                 if os.path.isfile(os.path.join(path, scene, 'recon_depth', '{}.png'.format(n))):
                     idxs = scene, n
                     all_imgs.append(idxs)
-            break
+            # break
         return all_imgs
 
     def __len__(self):
@@ -41,8 +41,11 @@ class NeuconDepths(Dataset):
     def __getitem__(self, idx):
         path = os.path.join(self.datapath, self.source_path)
         scene, n = self.all_imgs[idx]
+        color = np.asarray(PIL.Image.open(os.path.join(
+            path, scene, 'color', '{}.jpg'.format(n))))
         recon_depth = np.load(os.path.join(
             path, scene, 'recon_depth', '{}.npy'.format(n))) / 3
         gt_depth = np.asarray(PIL.Image.open(os.path.join(
             path, scene, 'depth', '{}.png'.format(n)))) / 3000
-        return recon_depth, gt_depth
+        mask = np.where(recon_depth > 0.0, False, True)
+        return color, recon_depth, gt_depth, mask
