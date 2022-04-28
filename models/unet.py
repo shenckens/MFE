@@ -86,5 +86,5 @@ class Unet(nn.Module):
         x = self.up4(x)  # (N, 64, 480, 640)
 
         x = self.fc(x)  # (N, 1, 480, 640)
-        x = nn.Sigmoid(x)
-        return x
+        
+        return F.sigmoid(x)
