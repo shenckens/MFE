@@ -10,7 +10,7 @@ from utils import *
 import os
 import argparse
 
-datapath = '/project/henckens/data/scannet/scans_test'
+datapath = '/project/henckens/data'
 
 if __name__ == "__main__":
 
