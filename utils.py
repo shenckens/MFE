@@ -30,6 +30,6 @@ def fill_recon_img(recon_img, gt_img, mask, zclip=False):
     if zclip:
         img = np.where(img > zclip, 0.0, img)
     img = torch.from_numpy(img)
-    img = torch.unsqueeze(img, dim=0)
-    print(f'Returning input of shape {img.shape}.')
+    img = torch.unsqueeze(img, dim=1)
+    print(f'Proceeding with data input of shape {img.shape}.')
     return
