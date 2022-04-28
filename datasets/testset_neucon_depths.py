@@ -27,7 +27,7 @@ class TestsetNeuconDepths(Dataset):
         self.max_depth = 0.0
 
     def build_list(self):
-        print(f'Building list of images...')
+        print(f'Building list of {self.mode} images...')
         all_imgs = []
         for i, scene in enumerate(self.scenes):
             if i % 10 == 0:

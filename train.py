@@ -48,9 +48,9 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Loss module
-    if args.loss == 'l1':
+    if args.loss_fn == 'l1':
         loss_module = nn.L1Loss()
-    elif arg.loss == 'ssim':
+    elif arg.loss_fn == 'ssim':
         loss_module = pytorch_ssim.SSIM()
 
     for epoch in range(args.epochs):
