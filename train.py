@@ -33,7 +33,7 @@ if __name__ == "__main__":
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # train_data = NeuconDepths('./Desktop/data', 'test')
-    traindata = TestsetNeuconDepths(datapath, 'train')
+    train_data = TestsetNeuconDepths(datapath, 'train')
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
     model = DenoisingAutoencoder().to(device)
