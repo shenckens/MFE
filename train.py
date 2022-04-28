@@ -91,4 +91,4 @@ if __name__ == "__main__":
         # do validation
         # update graph
 
-    print(epoch_losses)
+    print(epoch_loss)
