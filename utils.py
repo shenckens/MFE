@@ -29,4 +29,5 @@ def fill_recon_img(recon_img, gt_img, mask, zclip=False):
     img = np.where(mask, gt_img, recon_img)
     if zclip:
         img = np.where(img > zclip, 0.0, img)
+    print(f'Returning input of shape {img.shape}.')
     return torch.from_numpy(img)

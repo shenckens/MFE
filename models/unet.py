@@ -49,42 +49,42 @@ class Unet(nn.Module):
         self.fc = nn.Conv2d(base_channel_size, 1, kernel_size=3, padding=1)
 
     def forward(self, x):
-        # Encode (w,h,c)
+        # Encode (b,w,h,c)
         x = self.down1(x)
-        skip1 = x  # 640x480x64
+        skip1 = x  # bx640x480x64
 
         x = self.pool(x)  # Downscaling to 320x240
         x = self.down2(x)
-        skip2 = x  # 320x240x128
+        skip2 = x  # bx320x240x128
 
         x = self.pool(x)
         x = self.down3(x)
-        skip3 = x  # 160x120x256
+        skip3 = x  # bx160x120x256
 
         x = self.pool(x)
         x = self.down4(x)
-        skip4 = x  # 80x60x512
+        skip4 = x  # bx80x60x512
 
         x = self.pool(x)
-        x = self.down5(x)  # 40x30x1024
+        x = self.down5(x)  # bx40x30x1024
 
         # Decode (w,h,c)
-        x = self.trans1(x)  # 80x60x512
-        x = torch.cat([x, skip4], dim=1)  # 80x60x(512+512)
-        x = self.up1(x)  # 80x60x512
+        x = self.trans1(x)  # bx80x60x512
+        x = torch.cat([x, skip4], dim=1)  # bx80x60x(512+512)
+        x = self.up1(x)  # bx80x60x512
 
         x = self.trans2(x)  # 160x120x256
-        x = torch.cat([x, skip3], dim=1)  # 160x120x(256+256)
-        x = self.up2(x)  # 160x120x256
+        x = torch.cat([x, skip3], dim=1)  # bx160x120x(256+256)
+        x = self.up2(x)  # bx160x120x256
 
-        x = self.trans3(x)  # 320x240x128
-        x = torch.cat([x, skip2], dim=1)  # 320x240x(128+128)
-        x = self.up3(x)  # 320x240x128
+        x = self.trans3(x)  # bx320x240x128
+        x = torch.cat([x, skip2], dim=1)  # bx320x240x(128+128)
+        x = self.up3(x)  # bx320x240x128
 
-        x = self.trans4(x)  # 640x480x64
-        x = torch.cat([x, skip1], dim=1)  # 640x480x(64+64)
-        x = self.up4(x)  # 640x480x64
+        x = self.trans4(x)  # bx640x480x64
+        x = torch.cat([x, skip1], dim=1)  # bx640x480x(64+64)
+        x = self.up4(x)  # bx640x480x64
 
-        x = self.fc(x)  # 640x480x1
+        x = self.fc(x)  # bx640x480x1
 
         return F.sigmoid(x)
