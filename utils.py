@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.ignite.metrics import SSIM
 
 # Loss functions
 
