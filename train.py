@@ -47,6 +47,7 @@ if __name__ == "__main__":
     ssim_loss = pytorch_ssim.SSIM()
 
     for epoch in range(args.epochs):
+        print(f'Epoch {epoch+1}/{args.epochs+1}')
         model.train()
         for recon_img, gt_img, mask in train_dl:
             # train batch
