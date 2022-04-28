@@ -53,35 +53,42 @@ if __name__ == "__main__":
     elif arg.loss_fn == 'ssim':
         loss_module = pytorch_ssim.SSIM()
 
+    epoch_loss = []
     for epoch in range(args.epochs):
+        losses = []
         print(f'Epoch {epoch+1}/{args.epochs+1}')
         model.train()
+        i = 0
         for recon_img, gt_img, mask in train_dl:
             # train batch
             input = fill_recon_img(recon_img, gt_img, mask)
             input = torch.unsqueeze(input, dim=1)
-            print(f'Proceeding with data input of shape {input.shape}.')
             input = input.to(device=device, dtype=torch.float)
             gt_img = torch.unsqueeze(gt_img, dim=1)
-            print(f'The shape of gt_img = {gt_img.shape}')
             gt_img = gt_img.to(device=device, dtype=torch.float)
 
             # forward pass
             optimizer.zero_grad()
-            print(f'Entering model forward pass.')
             output = model(input)
 
             # calculate loss
-            print(f'Entering loss module.')
             loss = loss_module(output, gt_img)
-            print(f'The loss value is {loss}.')
+            losses.append(loss)
 
             # backward pass, optimizer step.
             loss.backward()
             optimizer.step()
-            print(f'Completed one iteration')
+
+            i += 1
+            if i % 100 == 0:
+                print(f'Completed {i}/{len(train_dl)} iterations\
+                      on epoch {epoch+1}/{args.epochs+1}')
+
+        epoch_loss.append(losses.mean())
         print(f'Completed one epoch')
         break
         model.eval()
         # do validation
         # update graph
+
+    print(epoch_losses)
