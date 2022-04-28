@@ -16,6 +16,7 @@ class NeuconDepths(Dataset):
             self.source_path = 'scans_test'
         else:
             self.source_path = 'scans'
+        self.max_depth = 0.0
         self.all_imgs = self.build_list()
 
     def build_list(self):
@@ -29,10 +30,20 @@ class NeuconDepths(Dataset):
             n_poses = len(os.listdir(os.path.join(
                 path, scene, 'pose')))
             for n in range(n_poses):
-                if os.path.isfile(os.path.join(path, scene, 'recon_depth', '{}.png'.format(n))):
+                if os.path.isfile(os.path.join(path, scene, 'recon_max_depth', '{}.png'.format(n))):
                     idxs = scene, n
                     all_imgs.append(idxs)
+                    depth_val1 = np.load(os.path.join(
+                        path, scene, 'recon_depth', '{}.npy'.format(n))).max()
+                    depth_val2 = np.asarray(PIL.Image.open(os.path.join(
+                        path, scene, 'depth', '{}.png'.format(n)))).max() / 1000
+                    for val in [depth_val1, depth_val2]:
+                        if val > self.max_depth:
+                            self.max_depth = val
+
             # break
+
+        print(self.max_depth)
         return all_imgs
 
     def __len__(self):
