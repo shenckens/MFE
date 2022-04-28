@@ -52,6 +52,7 @@ if __name__ == "__main__":
         for recon_img, gt_img, mask in train_dl:
             # train batch
             input = fill_recon_img(recon_img, gt_img, mask, zclip=3.0)
+            print(input)
             input.to(device)
 
             # forward pass
