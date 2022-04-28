@@ -26,6 +26,8 @@ if __name__ == "__main__":
                         help='Number of epochs used for training.')
     parser.add_argument('--batch_size', type=int, default=2,
                         help='Number of images in a batch.')
+    parser.add_argument('--base_channel_size', type=int, default=64,
+                        help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
     # parser.add_argument('--optimizer', type=str, default='Adam', help='Optimizer used during training.')
 
     args = parser.parse_args()
@@ -38,7 +40,7 @@ if __name__ == "__main__":
     train_data = TestsetNeuconDepths(datapath, 'train')
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
-    model = Unet().to(device)
+    model = unet.Unet(args.base_channel_size).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Loss module
