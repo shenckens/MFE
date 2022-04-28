@@ -21,7 +21,6 @@ class TestsetNeuconDepths(Dataset):
             self.scenes = self.val
         else:
             self.scenes = self.test
-        print(len(self.train), len(self.val), len(self.test))
         self.all_imgs = self.build_list()
         self.max_depth = 0.0
 
@@ -37,8 +36,6 @@ class TestsetNeuconDepths(Dataset):
                 if os.path.isfile(os.path.join(self.path, scene, 'recon_max_depth', '{}.png'.format(n))):
                     idxs = scene, n
                     all_imgs.append(idxs)
-
-            # break # remove later
         return all_imgs
 
     def compute_max_depth(self):
@@ -46,7 +43,7 @@ class TestsetNeuconDepths(Dataset):
         print(f'This can take a while')
         for scene, n in self.all_imgs:
             depth_val1 = np.load(os.path.join(
-                self.path, scene, 'recon_depth', '{}.npy'.format(n))).max()
+                self.path, scene, 'recon_max_depth', '{}.npy'.format(n))).max()
             depth_val2 = np.asarray(PIL.Image.open(os.path.join(
                 self.path, scene, 'depth', '{}.png'.format(n)))).max() / 1000
             for val in [depth_val1, depth_val2]:
