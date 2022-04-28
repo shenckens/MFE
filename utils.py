@@ -26,6 +26,7 @@ def BCE(x, y):
 
 
 def fill_recon_img(recon_img, gt_img, mask, zclip=False):
+    print(recon_img, gt_img, mask)
     img = np.where(mask, gt_img, recon_img)
     if zclip:
         img = np.where(img > zclip, 0.0, img)
