@@ -61,6 +61,7 @@ if __name__ == "__main__":
             print(f'input is on {input.get_device()}')
             gt_img.to(device)
             print(f'gt is on {gt_img.get_device()}')
+            print(f'model is on {model.get_device()}')
 
             # forward pass
             optimizer.zero_grad()
