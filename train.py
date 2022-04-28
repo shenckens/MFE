@@ -35,7 +35,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print(f'Using {device} device.')
 
     # train_data = NeuconDepths('./Desktop/data', 'test')
@@ -58,7 +58,9 @@ if __name__ == "__main__":
             input = torch.unsqueeze(input, dim=1)
             print(f'Proceeding with data input of shape {input.shape}.')
             input.to(device)
+            print(f'input is on {input.get_device()}')
             gt_img.to(device)
+            print(f'gt is on {gt_img.get_device()}')
 
             # forward pass
             optimizer.zero_grad()
