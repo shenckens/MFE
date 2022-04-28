@@ -6,7 +6,7 @@ import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
 from datasets.testset_neucon_depths import TestsetNeuconDepths
 from datasets.neucon_depths import NeuconDepths
-from models import unet
+from models.unet import *
 from utils import fill_recon_img
 import os
 import argparse
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     train_data = TestsetNeuconDepths(datapath, 'train', zclip=args.zclip)
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
-    model = unet.Unet(args.base_channel_size)
+    model = Unet(args.base_channel_size)
     model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
