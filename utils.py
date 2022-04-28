@@ -25,12 +25,6 @@ def BCE(x, y):
     return loss
 
 
-def fill_recon_img(recon_img, gt_img, mask, zclip=False):
-    print(recon_img, gt_img, mask)
+def fill_recon_img(recon_img, gt_img, mask):
     img = np.where(mask, gt_img, recon_img)
-    if zclip:
-        img = np.where(img > zclip, 0.0, img)
-    img = torch.from_numpy(img)
-    img = torch.unsqueeze(img, dim=1)
-    print(f'Proceeding with data input of shape {img.shape}.')
-    return
+    return torch.from_numpy(img)

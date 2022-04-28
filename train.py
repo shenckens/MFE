@@ -28,6 +28,8 @@ if __name__ == "__main__":
                         help='Number of images in a batch.')
     parser.add_argument('--base_channel_size', type=int, default=64,
                         help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
+    parser.add_argument('--zclip', type=float, default=False,
+                        help='The maximum value (in meters) from which the depth is not counted and set to 0.')
     # parser.add_argument('--optimizer', type=str, default='Adam', help='Optimizer used during training.')
 
     args = parser.parse_args()
@@ -37,7 +39,7 @@ if __name__ == "__main__":
     print(f'Using {device} device.')
 
     # train_data = NeuconDepths('./Desktop/data', 'test')
-    train_data = TestsetNeuconDepths(datapath, 'train')
+    train_data = TestsetNeuconDepths(datapath, 'train', zclip=args.zclip)
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
     model = unet.Unet(args.base_channel_size).to(device)
@@ -51,8 +53,9 @@ if __name__ == "__main__":
         model.train()
         for recon_img, gt_img, mask in train_dl:
             # train batch
-            input = fill_recon_img(recon_img, gt_img, mask, zclip=3.0)
-            print(input)
+            input = fill_recon_img(recon_img, gt_img, mask)
+            input = torch.unsqueeze(input, dim=1)
+            print(f'Proceeding with data input of shape {input.shape}.')
             input.to(device)
 
             # forward pass
