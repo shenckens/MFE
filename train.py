@@ -57,10 +57,13 @@ if __name__ == "__main__":
             input = torch.unsqueeze(input, dim=1)
             print(f'Proceeding with data input of shape {input.shape}.')
             input.to(device)
-            print(f'input is on cuda? {input.is_cuda()}')
+            if input.is_cuda():
+                print(f'input is on cuda')
             gt_img.to(device)
-            print(f'gt is on cuda? {gt_img.is_cuda()}')
-            print(f'model is on cuda? {model.is_cuda()}')
+            if gt_img.is_cuda():
+                print(f'gt is on cuda')
+            if model.is_cuda():
+                print(f'model is on cuda')
 
             # forward pass
             optimizer.zero_grad()
