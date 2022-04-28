@@ -6,6 +6,7 @@ import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
 from datasets.testset_neucon_depths import TestsetNeuconDepths
 from datasets.neucon_depths import NeuconDepths
+from models import unet
 from utils import *
 import os
 import argparse
@@ -31,12 +32,13 @@ if __name__ == "__main__":
     print(args)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f'Using {device} device.')
 
     # train_data = NeuconDepths('./Desktop/data', 'test')
     train_data = TestsetNeuconDepths(datapath, 'train')
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
-    model = DenoisingAutoencoder().to(device)
+    model = Unet().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Loss module
