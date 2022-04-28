@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import DataLoader
-# from torch.ignite.metrics import SSIM
 import pytorch_ssim
 import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
@@ -24,7 +23,7 @@ if __name__ == "__main__":
                         help='The learning-rate used for training the model.')
     parser.add_argument('--epochs', type=int, default=10,
                         help='Number of epochs used for training.')
-    parser.add_argument('--batch_size', type=int, default=2,
+    parser.add_argument('--batch_size', type=int, default=32,
                         help='Number of images in a batch.')
     parser.add_argument('--base_channel_size', type=int, default=64,
                         help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
@@ -56,7 +55,7 @@ if __name__ == "__main__":
     epoch_loss = []
     for epoch in range(args.epochs):
         losses = []
-        print(f'Epoch {epoch+1}/{args.epochs+1}')
+        print(f'Epoch {epoch+1}/{args.epochs}')
         model.train()
         i = 0
         for recon_img, gt_img, mask in train_dl:
@@ -82,7 +81,7 @@ if __name__ == "__main__":
             i += 1
             if i % 100 == 0:
                 print(f'Completed {i}/{len(train_dl)} iterations\
-                      on epoch {epoch+1}/{args.epochs+1}')
+                      on epoch {epoch+1}/{args.epochs}')
 
         epoch_loss.append(losses.mean())
         print(f'Completed one epoch')
