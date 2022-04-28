@@ -58,6 +58,8 @@ if __name__ == "__main__":
             input = torch.unsqueeze(input, dim=1)
             print(f'Proceeding with data input of shape {input.shape}.')
             input = input.to(device=device, dtype=torch.float)
+            gt_img = torch.unsqueeze(gt_img, dim=1)
+            print(f'The shape of gt_img = {gt_img.shape}')
             gt_img = gt_img.to(device=device, dtype=torch.float)
 
             # forward pass

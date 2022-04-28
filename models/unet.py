@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class ConvBlock(nn.Module):
@@ -86,5 +85,5 @@ class Unet(nn.Module):
         x = self.up4(x)  # (N, 64, 480, 640)
 
         x = self.fc(x)  # (N, 1, 480, 640)
-        
-        return F.sigmoid(x)
+
+        return torch.sigmoid(x)
