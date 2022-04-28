@@ -6,8 +6,9 @@ import PIL
 
 
 class TestsetNeuconDepths(Dataset):
-    def __init__(self, datapath, mode):
+    def __init__(self, datapath, mode, zclip):
         super(TestsetNeuconDepths, self).__init__()
+        self.zclip = zclip
         self.mode = mode
         self.path = os.path.join(datapath, 'scans_test')
         self.all_scenes = sorted(
@@ -54,16 +55,16 @@ class TestsetNeuconDepths(Dataset):
     def __len__(self):
         return len(self.all_imgs)
 
-    def __getitem__(self, idx, zclip=False):
+    def __getitem__(self, idx):
         scene, n = self.all_imgs[idx]
         recon_depth = np.load(os.path.join(
             self.path, scene, 'recon_depth', '{}.npy'.format(n))) / 1
         gt_depth = np.asarray(PIL.Image.open(os.path.join(
             self.path, scene, 'depth', '{}.png'.format(n)))) / 1000
-        if zclip:
-            recon_depth /= zclip
+        if self.zclip:
+            recon_depth /= self.zclip
             recon_depth = np.where(recon_depth > 1.0, 0.0, recon_depth)
-            gt_depth /= zclip
+            gt_depth /= self.zclip
             gt_depth = np.where(gt_depth > 1.0, 0.0, gt_depth)
         mask = np.where(recon_depth > 0.0, 0.0, 1.0)
         return recon_depth, gt_depth, mask
