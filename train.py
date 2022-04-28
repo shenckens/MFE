@@ -7,7 +7,7 @@ import numpy as np
 from datasets.testset_neucon_depths import TestsetNeuconDepths
 from datasets.neucon_depths import NeuconDepths
 from models import unet
-from utils import *
+from utils import fill_recon_img
 import os
 import argparse
 
@@ -51,8 +51,8 @@ if __name__ == "__main__":
         model.train()
         for recon_img, gt_img, mask in train_dl:
             # train batch
-            input = fill_recon_img(
-                recon_img, gt_img, mask, zclip=3.0).to(device)
+            input = fill_recon_img(recon_img, gt_img, mask, zclip=3.0)
+            input.to(device)
 
             # forward pass
             optimizer.zero_grad()
