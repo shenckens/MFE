@@ -3,12 +3,14 @@ from torch.utils.data import DataLoader
 from torch.ignite.metrics import SSIM
 import pytorch_ssim
 import numpy as np
-from models.img_denoising import DenoisingAutoencoder
-# from datasets.testset_neucon_depths import TestsetNeuconDepths
+# from models.img_denoising import DenoisingAutoencoder
+from datasets.testset_neucon_depths import TestsetNeuconDepths
 from datasets.neucon_depths import NeuconDepths
 from utils import *
 import os
 import argparse
+
+datapath = '/project/henckens/data/scannet/scans_test'
 
 if __name__ == "__main__":
 
@@ -30,8 +32,8 @@ if __name__ == "__main__":
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_data = NeuconDepths('./Desktop/data', 'test')
-    # traindata = TestsetNeuconDepths('./Desktop/data', 'train')
+    # train_data = NeuconDepths('./Desktop/data', 'test')
+    traindata = TestsetNeuconDepths('./Desktop/data', 'train')
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
     model = DenoisingAutoencoder().to(device)
@@ -58,7 +60,7 @@ if __name__ == "__main__":
             # backward pass, optimizer step.
             loss.backward()
             optimizer.step()
-
+        break
         model.eval()
         # do validation
         # update graph
