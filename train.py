@@ -19,7 +19,7 @@ if __name__ == "__main__":
     #        Initialize the parameters
     # ----------------------------------------
     parser = argparse.ArgumentParser()
-    # General parameters
+
     parser.add_argument('--lr', type=float, default=0.01,
                         help='The learning-rate used for training the model.')
     parser.add_argument('--epochs', type=int, default=10,
@@ -30,8 +30,9 @@ if __name__ == "__main__":
                         help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
     parser.add_argument('--zclip', type=float, default=False,
                         help='The maximum value (in meters) from which the depth is not counted and set to 0.')
-    # parser.add_argument('--optimizer', type=str, default='Adam', help='Optimizer used during training.')
-
+    parser.add_argument('--loss_fn', type=str, default='l1',
+                        help="The loss function used (either 'ssim' or 'l1')")
+    # weight decay?
     args = parser.parse_args()
     print(args)
 
@@ -40,14 +41,17 @@ if __name__ == "__main__":
 
     # train_data = NeuconDepths('./Desktop/data', 'test')
     train_data = TestsetNeuconDepths(datapath, 'train', zclip=args.zclip)
-    # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
+    # valdata = TestsetNeuconDepths('./Desktop/data', 'val', zclip=args.zclip)
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
     model = Unet(args.base_channel_size)
     model = model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Loss module
-    ssim_loss = pytorch_ssim.SSIM()
+    if args.loss == 'l1':
+        loss_module = nn.L1Loss()
+    elif arg.loss == 'ssim':
+        loss_module = pytorch_ssim.SSIM()
 
     for epoch in range(args.epochs):
         print(f'Epoch {epoch+1}/{args.epochs+1}')
@@ -69,9 +73,8 @@ if __name__ == "__main__":
 
             # calculate loss
             print(f'Entering loss module.')
-            loss = ssim_loss(output, gt_img)
-            loss_value = loss.data[0]
-            print(loss_value)
+            loss = loss_module(output, gt_img)
+            print(f'The loss value is {loss}.')
 
             # backward pass, optimizer step.
             loss.backward()
