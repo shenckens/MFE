@@ -13,7 +13,7 @@ data = NeuconDepths('./Desktop/data', 'test')
 print(len(data))
 dataloader = DataLoader(data, batch_size=1, shuffle=True)
 
-for color, noisy, gt, mask in dataloader:
+for noisy, gt, mask in dataloader:
     print(noisy.shape)
     print(noisy[0])
     print(gt.shape)
@@ -36,10 +36,10 @@ for color, noisy, gt, mask in dataloader:
     plt.imshow(mask[0])
     plt.title('mask')
     plt.subplot(3, 3, 6)
-    plt.imshow(np.where(mask[0], 0.0, gt[0]))
+    plt.imshow(np.where(mask, 0.0, gt)[0])
     plt.title('masked_gt')
     plt.subplot(3, 3, 7)
-    plt.imshow(color[0])
+    plt.imshow(noisy[0])
     plt.title('color')
     plt.tight_layout()
     plt.show()

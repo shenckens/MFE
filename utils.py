@@ -1,14 +1,18 @@
 import numpy as np
+import torch
+import torch.nn as nn
+from torch.ignite.metrics import SSIM
 
 # Loss functions
 
-def SSIM(x, y):
+
+def SSIM_loss(x, y):
     loss = 0
     return loss
 
 
 def L1(x, y):
-    loss = 0
+    loss = nn.L1Loss(x, y)
     return loss
 
 
@@ -16,6 +20,12 @@ def L2(x, y):
     loss = 0
     return loss
 
+
 def BCE(x, y):
     loss = 0
     return loss
+
+
+def fill_recon_img(recon_img, gt_img, mask):
+    img = np.where(mask, gt_img, recon_img)
+    return img

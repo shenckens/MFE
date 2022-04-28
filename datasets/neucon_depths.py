@@ -48,4 +48,5 @@ class NeuconDepths(Dataset):
         gt_depth = np.asarray(PIL.Image.open(os.path.join(
             path, scene, 'depth', '{}.png'.format(n)))) / 3000
         mask = np.where(recon_depth > 0.0, False, True)
-        return color, recon_depth, gt_depth, mask
+        # return color, recon_depth, gt_depth, mask
+        return recon_depth, gt_depth, mask
