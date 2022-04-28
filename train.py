@@ -42,8 +42,7 @@ if __name__ == "__main__":
     train_data = TestsetNeuconDepths(datapath, 'train', zclip=args.zclip)
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
-    model = Unet(args.base_channel_size)
-    model.to(device)
+    model = Unet(args.base_channel_size).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Loss module
@@ -58,10 +57,10 @@ if __name__ == "__main__":
             input = torch.unsqueeze(input, dim=1)
             print(f'Proceeding with data input of shape {input.shape}.')
             input.to(device)
-            print(f'input is on {input.get_device()}')
+            print(f'input is on cuda? {input.is_cuda()}')
             gt_img.to(device)
-            print(f'gt is on {gt_img.get_device()}')
-            print(f'model is on {model.get_device()}')
+            print(f'gt is on cuda? {gt_img.is_cuda()}')
+            print(f'model is on cuda? {model.is_cuda()}')
 
             # forward pass
             optimizer.zero_grad()
