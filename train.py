@@ -42,7 +42,8 @@ if __name__ == "__main__":
     train_data = TestsetNeuconDepths(datapath, 'train', zclip=args.zclip)
     # valdata = TestsetNeuconDepths('./Desktop/data', 'val')
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
-    model = unet.Unet(args.base_channel_size).to(device)
+    model = unet.Unet(args.base_channel_size)
+    model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Loss module
@@ -73,6 +74,8 @@ if __name__ == "__main__":
             # backward pass, optimizer step.
             loss.backward()
             optimizer.step()
+            print(f'Completed one iteration')
+        print(f'Completed one epoch')
         break
         model.eval()
         # do validation
