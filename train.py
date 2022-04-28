@@ -57,8 +57,8 @@ if __name__ == "__main__":
             input = fill_recon_img(recon_img, gt_img, mask)
             input = torch.unsqueeze(input, dim=1)
             print(f'Proceeding with data input of shape {input.shape}.')
-            input = input.to(device)
-            gt_img = gt_img.to(device)
+            input = input.to(device=device, dtype=torch.float)
+            gt_img = gt_img.to(device=device, dtype=torch.float)
 
             # forward pass
             optimizer.zero_grad()
