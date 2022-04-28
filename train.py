@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
-from torch.ignite.metrics import SSIM
+# from torch.ignite.metrics import SSIM
 import pytorch_ssim
 import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
