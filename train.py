@@ -57,12 +57,15 @@ if __name__ == "__main__":
             input = torch.unsqueeze(input, dim=1)
             print(f'Proceeding with data input of shape {input.shape}.')
             input.to(device)
+            gt_img.to(device)
 
             # forward pass
             optimizer.zero_grad()
+            print(f'Entering model forward pass.')
             output = model(input)
 
             # calculate loss
+            print(f'Entering loss module.')
             loss = ssim_loss(output, gt_img)
             loss_value = loss.data[0]
             print(loss_value)
