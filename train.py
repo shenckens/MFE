@@ -102,7 +102,10 @@ if __name__ == "__main__":
             output = model(input)
 
             # calculate loss
-            loss = loss_module(output, gt_img)
+            if args.loss_fn == 'ssim':
+                loss = -loss_module(output, gt_img)
+            else:
+                loss = loss_module(output, gt_img)
             losses.append(loss)
 
             # backward pass, optimizer step.
