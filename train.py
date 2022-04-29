@@ -78,7 +78,7 @@ if __name__ == "__main__":
         loss_module = nn.L1Loss()
     elif args.loss_fn == 'mse':
         loss_module = nn.MSELoss()
-    elif arg.loss_fn == 'ssim':
+    elif args.loss_fn == 'ssim':
         loss_module = pytorch_ssim.SSIM()
 
     train_loss = []
@@ -113,6 +113,7 @@ if __name__ == "__main__":
             if i % 100 == 0:
                 print(f'Completed {i}/{len(train_dl)} iterations\
                       on epoch {epoch+1}/{args.epochs}')
+                print(f'Loss: {loss}')
 
         train_loss.append(losses.mean())
 
@@ -129,7 +130,7 @@ if __name__ == "__main__":
         print(f'Validation loss: {val_loss}')
 
         # Saving model so far.
-        torch.save(model.state_dict(), './saved_parameters/{}_epoch{}_lr{}_bs{}_zclip{}'.format(
+        torch.save(model.state_dict(), './saved_parameters/{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
             model.__class__.__name__, epoch+1, args.lr, args.batch_size, args.zclip))
 
     print(f'Train loss per epoch {train_loss}')
