@@ -126,7 +126,7 @@ if __name__ == "__main__":
         model.eval()
         for recon_img, gt_img, mask in val_dl:
             loss_val = evaluate(model, recon_img, gt_img, mask, epoch)
-            losses_val.append(loss_val)
+            losses_val.append(loss_val.item())
         val_loss.append(losses_val.mean())
 
         print(f'Completed epoch {epoch+1}.')
@@ -134,8 +134,9 @@ if __name__ == "__main__":
         print(f'Validation loss: {val_loss}')
 
         # Saving model so far.
-        torch.save(model.state_dict(), './saved_parameters/{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
-            model.__class__.__name__, epoch+1, args.lr, args.batch_size, args.zclip))
+        if args.save_model:
+            torch.save(model.state_dict(), './saved_parameters/{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
+                model.__class__.__name__, epoch+1, args.lr, args.batch_size, args.zclip))
 
     print(f'Train loss per epoch {train_loss}')
     print(f'Validation loss per epoch {val_loss}')
