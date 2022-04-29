@@ -10,7 +10,8 @@ from utils import fill_recon_img
 import os
 import argparse
 
-datapath = '/project/henckens/data/scannet' # Goes in config file at later stage
+# Goes in config file at later stage
+datapath = '/project/henckens/data/scannet'
 
 
 def evaluate(model, recon_img, gt_img, mask, epoch):

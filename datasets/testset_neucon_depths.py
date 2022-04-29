@@ -30,8 +30,8 @@ class TestsetNeuconDepths(Dataset):
         print(f'Building list of {self.mode} images...')
         all_imgs = []
         for i, scene in enumerate(self.scenes):
-            if i % 10 == 0:
-                print(f'Pre-processing scene {i}/{len(self.scenes)}')
+            if (i+1) % 10 == 0:
+                print(f'Pre-processing scene {i+1}/{len(self.scenes)}')
             n_poses = len(os.listdir(os.path.join(
                 self.path, scene, 'pose')))
             for n in range(n_poses):
