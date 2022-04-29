@@ -50,7 +50,7 @@ if __name__ == "__main__":
                         help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
     parser.add_argument('--zclip', type=float, default=False,
                         help='The maximum value (in meters) from which the depth is not counted and set to 0.')
-    parser.add_argument('--loss_fn', type=str, default='mse',
+    parser.add_argument('--loss_fn', type=str, default='ssim',
                         help="The loss function used (either 'mse', 'ssim' or 'l1')")
     parser.add_argument('--save_model', type=bool, default=True,
                         help='Boolean to indicate if the model parameters should be saved to disk after every epoch.')
