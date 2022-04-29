@@ -38,21 +38,23 @@ if __name__ == "__main__":
     # ----------------------------------------
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--lr', type=float, default=0.01,
+    parser.add_argument('--lr', type=float, default=0.001,
                         help='The learning-rate used for training the model.')
     parser.add_argument('--epochs', type=int, default=10,
                         help='Number of epochs used for training.')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='Number of images in a batch.')
+    parser.add_argument('--decay', type=float, default=0.01,
+                        help='The weight decay (L2 reguralization) used for the model optimizer.')
     parser.add_argument('--base_channel_size', type=int, default=64,
                         help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
     parser.add_argument('--zclip', type=float, default=False,
                         help='The maximum value (in meters) from which the depth is not counted and set to 0.')
-    parser.add_argument('--loss_fn', type=str, default='l1',
-                        help="The loss function used (either 'ssim' or 'l1')")
+    parser.add_argument('--loss_fn', type=str, default='mse',
+                        help="The loss function used (either 'mse', 'ssim' or 'l1')")
     parser.add_argument('--save_model', type=bool, default=True,
                         help='Boolean to indicate if the model parameters should be saved to disk after every epoch.')
-    # weight decay?
+
     args = parser.parse_args()
     print(args)
 
@@ -74,11 +76,14 @@ if __name__ == "__main__":
     # Loss module
     if args.loss_fn == 'l1':
         loss_module = nn.L1Loss()
+    elif args.loss_fn == 'mse':
+        loss_module = nn.MSELoss()
     elif arg.loss_fn == 'ssim':
         loss_module = pytorch_ssim.SSIM()
 
     train_loss = []
     val_loss = []
+    print(f'Training...')
     for epoch in range(args.epochs):
         losses = []
         print(f'Epoch {epoch+1}/{args.epochs}')
