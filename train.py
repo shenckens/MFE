@@ -135,8 +135,8 @@ if __name__ == "__main__":
 
         # Saving model so far.
         if args.save_model:
-            torch.save(model.state_dict(), './saved_parameters/{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
-                model.__class__.__name__, epoch+1, args.lr, args.batch_size, args.zclip))
+            torch.save(model.state_dict(), './saved_parameters/{}_loss-{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
+                model.__class__.__name__, args.loss_fn, epoch+1, args.lr, args.batch_size, args.zclip))
 
     print(f'Train loss per epoch {train_loss}')
     print(f'Validation loss per epoch {val_loss}')
