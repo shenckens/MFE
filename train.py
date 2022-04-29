@@ -104,6 +104,9 @@ if __name__ == "__main__":
             # calculate loss
             if args.loss_fn == 'ssim':
                 loss = -loss_module(output, gt_img)
+                loss = 1 - loss_module(output, gt_img)
+                loss_value = loss.item()
+                print(loss_value, loss)
             else:
                 loss = loss_module(output, gt_img)
             losses.append(loss)
