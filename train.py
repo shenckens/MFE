@@ -10,7 +10,7 @@ from utils import fill_recon_img
 import os
 import argparse
 
-datapath = '/project/henckens/data/scannet'
+datapath = '/project/henckens/data/scannet' # Goes in config file at later stage
 
 
 def evaluate(model, recon_img, gt_img, mask, epoch):
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Data and DataLoaders
     # train_data = NeuconDepths('./Desktop/data', 'test') # for local testing
     train_data = TestsetNeuconDepths(datapath, 'train', zclip=args.zclip)
-    val_data = TestsetNeuconDepths('./Desktop/data', 'val', zclip=args.zclip)
+    val_data = TestsetNeuconDepths(datapath, 'val', zclip=args.zclip)
     train_dl = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
     val_dl = DataLoader(val_data, batch_size=args.batch_size, shuffle=False)
 
