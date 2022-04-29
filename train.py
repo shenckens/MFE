@@ -42,7 +42,7 @@ if __name__ == "__main__":
                         help='The learning-rate used for training the model.')
     parser.add_argument('--epochs', type=int, default=10,
                         help='Number of epochs used for training.')
-    parser.add_argument('--batch_size', type=int, default=32,
+    parser.add_argument('--batch_size', type=int, default=8,
                         help='Number of images in a batch.')
     parser.add_argument('--decay', type=float, default=0.01,
                         help='The weight decay (L2 reguralization) used for the model optimizer.')
