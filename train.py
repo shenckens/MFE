@@ -42,7 +42,7 @@ if __name__ == "__main__":
                         help='The learning-rate used for training the model.')
     parser.add_argument('--epochs', type=int, default=10,
                         help='Number of epochs used for training.')
-    parser.add_argument('--batch_size', type=int, default=4,
+    parser.add_argument('--batch_size', type=int, default=2,
                         help='Number of images in a batch.')
     parser.add_argument('--decay', type=float, default=0.01,
                         help='The weight decay (L2 reguralization) used for the model optimizer.')
@@ -117,22 +117,18 @@ if __name__ == "__main__":
             if i % 100 == 0:
                 print(f'Completed {i}/{len(train_dl)} iterations\
                       on epoch {epoch+1}/{args.epochs}')
-                print(f'Loss: {loss}')
-                break  # REMOVE LATER!
+                print(f'Loss: {sum(losses)/len(losses)}')
 
         train_loss.append(sum(losses)/len(losses))
 
         # Validation
         losses_val = []
         model.eval()
-        # Edit, remove later
-        runs = 0
+
         for recon_img, gt_img, mask in val_dl:
             loss_val = evaluate(model, recon_img, gt_img, mask, epoch)
             losses_val.append(loss_val.item())
-            runs += 1
-            if runs == 3:
-                break
+
         val_loss.append(sum(losses_val)/len(losses_val))
 
         print(f'Completed epoch {epoch+1}.')
@@ -141,7 +137,7 @@ if __name__ == "__main__":
 
         # Saving model so far.
         if args.save_model:
-            torch.save(model.state_dict(), './saved_parameters/{}_loss-{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
+            torch.save(model.state_dict(), '/project/henckens/saved_parameters/{}_loss-{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
                 model.__class__.__name__, args.loss_fn, epoch+1, args.lr, args.batch_size, args.zclip))
 
     print(f'Train loss per epoch {train_loss}')
