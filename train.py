@@ -106,7 +106,7 @@ if __name__ == "__main__":
                 loss = 1 - loss_module(output, gt_img)
             else:
                 loss = loss_module(output, gt_img)
-            print(loss.item())
+            # print(loss.item())
             losses.append(loss.item())
 
             # backward pass, optimizer step.
