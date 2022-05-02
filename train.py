@@ -118,16 +118,22 @@ if __name__ == "__main__":
                 print(f'Completed {i}/{len(train_dl)} iterations\
                       on epoch {epoch+1}/{args.epochs}')
                 print(f'Loss: {loss}')
+                break  # REMOVE LATER!
 
-        train_loss.append(losses.mean())
+        train_loss.append(sum(losses)/len(losses))
 
         # Validation
         losses_val = []
         model.eval()
+        # Edit, remove later
+        runs = 0
         for recon_img, gt_img, mask in val_dl:
             loss_val = evaluate(model, recon_img, gt_img, mask, epoch)
             losses_val.append(loss_val.item())
-        val_loss.append(losses_val.mean())
+            runs += 1
+            if runs == 3:
+                break
+        val_loss.append(sum(losses_val)/len(losses_val))
 
         print(f'Completed epoch {epoch+1}.')
         print(f'Training loss: {train_loss}')
