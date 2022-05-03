@@ -70,17 +70,16 @@ if __name__ == "__main__":
     model = model.to(device)
     model.eval()
 
-    for recon_img, gt_img, mask in test_dl:
+    recon_img, gt_img, mask = next(iter(test_dl))
 
-        if args.fill_imgs:
-            input = fill_recon_img(recon_img, gt_img, mask)
-        else:
-            input = torch.from_numpy(recon_img)
-        input = torch.unsqueeze(input, dim=1)
-        input = input.to(device=device, dtype=torch.float)
+    if args.fill_imgs:
+        input = fill_recon_img(recon_img, gt_img, mask)
+    else:
+        input = torch.from_numpy(recon_img)
+    input = torch.unsqueeze(input, dim=1)
+    input = input.to(device=device, dtype=torch.float)
 
-        output = model(input).squeeze(dim=0)
-        input = input.squeeze(dim=0)
-        if (output.shape == gt_img.shape) == recon_img.shape:
-            plot_input_output(input, output, gt_img, args.state_dict)
-        break
+    output = model(input).squeeze(dim=0)
+    input = input.squeeze(dim=0)
+    if (output.shape == gt_img.shape) == recon_img.shape:
+        plot_input_output(input, output, gt_img, args.state_dict)
