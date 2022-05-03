@@ -1,6 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
-import pytorch_ssim
+import torchgeometry as tgm
 # import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
 from datasets.testset_neucon_depths import TestsetNeuconDepths
@@ -13,6 +13,10 @@ import argparse
 # Goes in config file at later stage
 datapath = '/project/henckens/data/scannet'
 saved_parameters = 'project/henckens/saved_parameters'
+
+# SSIM loss parameters
+window_size = 11
+reduction = 'mean'  # 'none', 'mean', 'sum'
 
 
 def evaluate(model, recon_img, gt_img, mask, epoch):
@@ -48,7 +52,7 @@ if __name__ == "__main__":
     parser.add_argument('--loss_fn', type=str, default='ssim',
                         help="The loss function used (either 'mse', 'ssim' or 'l1')")
     parser.add_argument('--state_dict', type=str, default=None,
-                        help="Path to the model's saved state dict.")
+                        help="Filename of model's saved state dict.")
 
     args = parser.parse_args()
     print(args)
@@ -78,11 +82,11 @@ if __name__ == "__main__":
     elif args.loss_fn == 'mse':
         loss_module = nn.MSELoss()
     elif args.loss_fn == 'ssim':
-        loss_module = pytorch_ssim.SSIM()
+        loss_module = tgm.losses.SSIM(window_size, reduction)
 
     test_loss = []
     print(f'Testing...')
-    # Validation
+
     losses_test = []
 
     for recon_img, gt_img, mask in val_dl:
