@@ -20,6 +20,7 @@ reduction = 'mean'  # 'none', 'mean', 'sum'
 
 
 def evaluate(model, recon_img, gt_img, mask):
+
     if args.fill_imgs:
         input = fill_recon_img(recon_img, gt_img, mask)
     else:
