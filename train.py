@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import DataLoader
+import torchgeometry as tgm
 import pytorch_ssim
 import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
@@ -12,6 +13,10 @@ import argparse
 
 # Goes in config file at later stage
 datapath = '/project/henckens/data/scannet'
+
+# SSIM loss parameters
+window_size = 11
+reduction = 'none'  # 'mean', 'sum'
 
 
 def evaluate(model, recon_img, gt_img, mask, epoch):
@@ -44,10 +49,12 @@ if __name__ == "__main__":
                         help='Number of epochs used for training.')
     parser.add_argument('--batch_size', type=int, default=2,
                         help='Number of images in a batch.')
-    parser.add_argument('--decay', type=float, default=0.01,
-                        help='The weight decay (L2 reguralization) used for the model optimizer.')
+    # parser.add_argument('--decay', type=float, default=0.01,
+    #                     help='The weight decay (L2 reguralization) used for the model optimizer.')
     parser.add_argument('--base_channel_size', type=int, default=64,
                         help='The size of the first (base) amount of convolutional filters, uses multiples of this number in deeper layers.')
+    parser.add_argument('--fill_imgs', type=bool, default=False,
+                        help='Boolean value to determine if holes in recon images should be filled up with pixels from the gt images.')
     parser.add_argument('--zclip', type=float, default=False,
                         help='The maximum value (in meters) from which the depth is not counted and set to 0.')
     parser.add_argument('--loss_fn', type=str, default='ssim',
@@ -79,7 +86,7 @@ if __name__ == "__main__":
     elif args.loss_fn == 'mse':
         loss_module = nn.MSELoss()
     elif args.loss_fn == 'ssim':
-        loss_module = pytorch_ssim.SSIM()
+        loss_module = tgm.losses.SSIM(window_size, reduction)
 
     train_loss = []
     val_loss = []
@@ -91,7 +98,8 @@ if __name__ == "__main__":
         i = 0
         for recon_img, gt_img, mask in train_dl:
             # train batch
-            input = fill_recon_img(recon_img, gt_img, mask)
+            if args.fill_imgs:
+                input = fill_recon_img(recon_img, gt_img, mask)
             input = torch.unsqueeze(input, dim=1)
             input = input.to(device=device, dtype=torch.float)
             gt_img = torch.unsqueeze(gt_img, dim=1)
@@ -102,10 +110,7 @@ if __name__ == "__main__":
             output = model(input)
 
             # calculate loss
-            if args.loss_fn == 'ssim':
-                loss = 1 - loss_module(output, gt_img)
-            else:
-                loss = loss_module(output, gt_img)
+            loss = loss_module(output, gt_img)
             # print(loss.item())
             losses.append(loss.item())
 
@@ -137,8 +142,8 @@ if __name__ == "__main__":
 
         # Saving model so far.
         if args.save_model:
-            torch.save(model.state_dict(), '/project/henckens/saved_parameters/{}_loss-{}_epoch{}_lr{}_bs{}_zclip{}.pt'.format(
-                model.__class__.__name__, args.loss_fn, epoch+1, args.lr, args.batch_size, args.zclip))
+            torch.save(model.state_dict(), '/project/henckens/saved_parameters/{}_loss-{}_epoch{}_lr{}_bs{}_filled{}_zclip{}.pt'.format(
+                model.__class__.__name__, args.loss_fn, epoch+1, args.lr, args.batch_size, args.fill_imgs, args.zclip))
 
     print(f'Train loss per epoch {train_loss}')
     print(f'Validation loss per epoch {val_loss}')
