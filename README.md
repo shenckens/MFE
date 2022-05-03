@@ -1,8 +1,8 @@
-# Monocular Floor Plan Estimation
+# MFE
 #### [Stijn Henckens](https://linkedin.com/shenckens) |
 <br/>
 
-This is the repo for my MSc AI Thesis on Monocular Floor Plan Estimation. 
+This is the repo for my MSc AI Thesis. 
 
 
 Todo:
