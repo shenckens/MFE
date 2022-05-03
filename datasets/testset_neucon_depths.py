@@ -2,7 +2,7 @@
 import os
 import numpy as np
 from torch.utils.data import Dataset
-import PIL
+import PIL.Image as Image
 
 
 class TestsetNeuconDepths(Dataset):
@@ -45,7 +45,7 @@ class TestsetNeuconDepths(Dataset):
         for scene, n in self.all_imgs:
             depth_val1 = np.load(os.path.join(
                 self.path, scene, 'recon_max_depth', '{}.npy'.format(n))).max()
-            depth_val2 = np.asarray(PIL.Image.open(os.path.join(
+            depth_val2 = np.asarray(Image.open(os.path.join(
                 self.path, scene, 'depth', '{}.png'.format(n)))).max() / 1000
             for val in [depth_val1, depth_val2]:
                 if val > self.max_depth:
@@ -59,7 +59,7 @@ class TestsetNeuconDepths(Dataset):
         scene, n = self.all_imgs[idx]
         recon_depth = np.load(os.path.join(
             self.path, scene, 'recon_depth', '{}.npy'.format(n))) / 1
-        gt_depth = np.asarray(PIL.Image.open(os.path.join(
+        gt_depth = np.asarray(Image.open(os.path.join(
             self.path, scene, 'depth', '{}.png'.format(n)))) / 1000
         if not self.zclip:
             self.zclip = self.compute_max_depth()
