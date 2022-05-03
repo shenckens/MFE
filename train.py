@@ -1,11 +1,11 @@
 import torch
 from torch.utils.data import DataLoader
 import torchgeometry as tgm
-import pytorch_ssim
-import numpy as np
+# import pytorch_ssim
+# import numpy as np
 # from models.img_denoising import DenoisingAutoencoder
 from datasets.testset_neucon_depths import TestsetNeuconDepths
-from datasets.neucon_depths import NeuconDepths
+# from datasets.neucon_depths import NeuconDepths
 from models.unet import *
 from utils import fill_recon_img
 import os
@@ -19,9 +19,11 @@ window_size = 11
 reduction = 'mean'  # 'none', 'mean', 'sum'
 
 
-def evaluate(model, recon_img, gt_img, mask, epoch):
-
-    input = fill_recon_img(recon_img, gt_img, mask)
+def evaluate(model, recon_img, gt_img, mask):
+    if args.fill_imgs:
+        input = fill_recon_img(recon_img, gt_img, mask)
+    else:
+        input = torch.from_numpy(recon_img)
     input = torch.unsqueeze(input, dim=1)
     input = input.to(device=device, dtype=torch.float)
     gt_img = torch.unsqueeze(gt_img, dim=1)
@@ -100,6 +102,8 @@ if __name__ == "__main__":
             # train batch
             if args.fill_imgs:
                 input = fill_recon_img(recon_img, gt_img, mask)
+            else:
+                input = torch.from_numpy(recon_img)
             input = torch.unsqueeze(input, dim=1)
             input = input.to(device=device, dtype=torch.float)
             gt_img = torch.unsqueeze(gt_img, dim=1)
@@ -131,7 +135,7 @@ if __name__ == "__main__":
         model.eval()
 
         for recon_img, gt_img, mask in val_dl:
-            loss_val = evaluate(model, recon_img, gt_img, mask, epoch)
+            loss_val = evaluate(model, recon_img, gt_img, mask)
             losses_val.append(loss_val.item())
 
         val_loss.append(sum(losses_val)/len(losses_val))

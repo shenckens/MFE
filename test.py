@@ -19,9 +19,11 @@ window_size = 11
 reduction = 'mean'  # 'none', 'mean', 'sum'
 
 
-def evaluate(model, recon_img, gt_img, mask, epoch):
-
-    input = fill_recon_img(recon_img, gt_img, mask)
+def evaluate(model, recon_img, gt_img, mask):
+    if args.fill_imgs:
+        input = fill_recon_img(recon_img, gt_img, mask)
+    else:
+        input = torch.from_numpy(recon_img)
     input = torch.unsqueeze(input, dim=1)
     input = input.to(device=device, dtype=torch.float)
     gt_img = torch.unsqueeze(gt_img, dim=1)
@@ -89,8 +91,8 @@ if __name__ == "__main__":
 
     losses_test = []
 
-    for recon_img, gt_img, mask in val_dl:
-        loss_test = evaluate(model, recon_img, gt_img, mask, epoch)
+    for recon_img, gt_img, mask in test_dl:
+        loss_test = evaluate(model, recon_img, gt_img, mask)
         losses_test.append(loss_test.item())
 
     test_loss.append(sum(losses_test)/len(losses_test))
