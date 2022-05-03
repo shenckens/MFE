@@ -16,7 +16,7 @@ datapath = '/project/henckens/data/scannet'
 
 # SSIM loss parameters
 window_size = 11
-reduction = 'none'  # 'mean', 'sum'
+reduction = 'mean'  # 'none', 'mean', 'sum'
 
 
 def evaluate(model, recon_img, gt_img, mask, epoch):
