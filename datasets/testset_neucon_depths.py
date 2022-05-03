@@ -62,10 +62,13 @@ class TestsetNeuconDepths(Dataset):
             self.path, scene, 'recon_depth', '{}.npy'.format(n))) / 1
         gt_depth = np.asarray(PIL.Image.open(os.path.join(
             self.path, scene, 'depth', '{}.png'.format(n)))) / 1000
-        if self.zclip:
-            recon_depth /= self.zclip
-            recon_depth = np.where(recon_depth > 1.0, 0.0, recon_depth)
-            gt_depth /= self.zclip
-            gt_depth = np.where(gt_depth > 1.0, 0.0, gt_depth)
+        if not self.zclip:
+            self.zclip = self.compute_max_depth()
+            print(f'Setting zclip to {self.zclip}')
+        recon_depth /= self.zclip
+        recon_depth = np.where(recon_depth > 1.0, 0.0, recon_depth)
+        gt_depth /= self.zclip
+        gt_depth = np.where(gt_depth > 1.0, 0.0, gt_depth)
+
         mask = np.where(recon_depth > 0.0, 0.0, 1.0)
         return recon_depth, gt_depth, mask
