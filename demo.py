@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 import numpy as np
 from models.unet import *
+from utils import fill_recon_img
 from datasets.testset_neucon_depths import TestsetNeuconDepths
 import matplotlib.pyplot as plt
 import os
@@ -16,24 +17,18 @@ window_size = 11
 reduction = 'mean'  # 'none', 'mean', 'sum'
 
 
-def plot_input_output(input, output, filename):
-    plt.subplot(1, 2, 1)
+def plot_input_output(input, output, gt):
+    plt.subplot(1, 3, 1)
     plt.imread(input)
     plt.title('Input image')
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 3, 2)
     plt.imread(output)
     plt.title('Output image')
+    plt.subplot(1, 3, 3)
+    plt.imread(gt)
+    plt.title('Ground-truth image')
     plt.tight_layout()
     return plt.show()
-
-
-def process_input(input):
-    recon_depth = np.load(input) / 1
-    if args.zclip:
-        recon_depth /= args.zclip
-        recon_depth = np.where(recon_depth > 1.0, 0.0, recon_depth)
-
-    return 0
 
 
 if __name__ == "__main__":
@@ -75,8 +70,17 @@ if __name__ == "__main__":
     model = model.to(device)
     model.eval()
 
-    # TODO: process input image.
-    # Image input size must be (1, 1, 480, 640).
-    output = model(input)
+    for recon_img, gt_img, mask in test_dl:
 
-    output = torch.squeeze(output, dim=1)
+        if args.fill_imgs:
+            input = fill_recon_img(recon_img, gt_img, mask)
+        else:
+            input = torch.from_numpy(recon_img)
+        input = torch.unsqueeze(input, dim=1)
+        input = input.to(device=device, dtype=torch.float)
+
+        output = model(input).squeeze(dim=0)
+        input = input.squeeze(dim=0)
+        if (output.shape == gt_img.shape) == recon_img.shape:
+            plot_input_output(input, output, gt_img, args.state_dict)
+        break
