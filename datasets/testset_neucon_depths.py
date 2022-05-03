@@ -3,7 +3,6 @@ import os
 import numpy as np
 from torch.utils.data import Dataset
 import PIL
-# from utils import fill_recon_img
 
 
 class TestsetNeuconDepths(Dataset):
