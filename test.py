@@ -24,7 +24,7 @@ def evaluate(model, recon_img, gt_img, mask):
     if args.fill_imgs:
         input = fill_recon_img(recon_img, gt_img, mask)
     else:
-        input = torch.from_numpy(recon_img)
+        input = recon_img
     input = torch.unsqueeze(input, dim=1)
     input = input.to(device=device, dtype=torch.float)
     gt_img = torch.unsqueeze(gt_img, dim=1)
