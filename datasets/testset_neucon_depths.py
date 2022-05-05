@@ -58,7 +58,7 @@ class TestsetNeuconDepths(Dataset):
     def __getitem__(self, idx):
         scene, n = self.all_imgs[idx]
         recon_depth = np.load(os.path.join(
-            self.path, scene, 'recon_depth', '{}.npy'.format(n))) / 1
+            self.path, scene, 'recon_max_depth', '{}.npy'.format(n))) / 1
         gt_depth = np.asarray(Image.open(os.path.join(
             self.path, scene, 'depth', '{}.png'.format(n)))) / 1000
         if not self.zclip:

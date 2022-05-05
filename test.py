@@ -12,7 +12,7 @@ import argparse
 
 # Goes in config file at later stage
 datapath = '/project/henckens/data/scannet'
-saved_parameters = 'project/henckens/saved_parameters'
+saved_parameters = '/project/henckens/saved_parameters'
 
 # SSIM loss parameters
 window_size = 11
