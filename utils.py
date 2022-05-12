@@ -21,7 +21,7 @@ def stack_patch(patch, img):
     return A
 
 
-def calculate_normal(A):
+def calc_normal(A):
     '''An = b. Where A is a stacked matrix of 3d points in a patch,
        n is the normal vector and b a 3d vector of ones.
     '''
