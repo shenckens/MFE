@@ -17,7 +17,6 @@ def stack_patch(patch, img):
             if patch[i][j]:
                 pts.append((i, j, img[i][j]))
     A = np.stack(pts, axis=0)
-    print(A.shape)
     return A
 
 
@@ -25,15 +24,17 @@ def calc_normal(A):
     '''An = b. Where A is a stacked matrix of 3d points in a patch,
        n is the normal vector and b a 3d vector of ones.
     '''
-    b = np.ones((3, 1))
+    b = np.ones((len(A), 1))
     n = np.linalg.inv(A.T @ A) @ A.T @ b
     n /= np.linalg.norm(n, ord=2)
     return n
 
 
-def MPL(n, n_gt):
+def MPL(patch, img, img_gt):
     '''Computes the Mean Planar Loss for one single planar patch
-       in a current and target image.
+       in a current and corresponding ground truth image.
     '''
+    A, A_gt = stack_patch(patch, img), stack_patch(patch, img_gt)
+    n, n_gt = calc_normal(A), calc_normal(A_gt)
     loss = np.linalg.norm(n - n_gt, ord=1)
     return loss
