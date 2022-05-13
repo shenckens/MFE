@@ -98,7 +98,7 @@ if __name__ == "__main__":
         print(f'Epoch {epoch+1}/{args.epochs}')
         model.train()
         i = 0
-        for recon_img, gt_img, mask in train_dl:
+        for recon_img, gt_img, mask, _ in train_dl:
             # train batch
             if args.fill_imgs:
                 input = fill_recon_img(recon_img, gt_img, mask)

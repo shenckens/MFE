@@ -54,8 +54,10 @@ def process_input_img(scene, n, zclip=False):
 
     mask = torch.from_numpy(
         np.where(recon_depth > 0.0, 0.0, 1.0))
-    print(recon_depth.shape, gt_depth.shape, mask.shape)
-    return recon_depth, gt_depth, mask
+    color = Image.open(os.path.join(datapath, 'scans_test',
+                                    scene, 'color', '{}.jpg'.format(n)))
+    print(recon_depth.shape, gt_depth.shape, mask.shape, color.shape)
+    return recon_depth, gt_depth, mask, color
 
 
 if __name__ == "__main__":
@@ -109,11 +111,11 @@ if __name__ == "__main__":
         test_data = TestsetNeuconDepths(datapath, 'test', zclip=args.zclip)
         test_dl = DataLoader(test_data, batch_size=1, shuffle=True)
         # Get single sample.
-        recon_img, gt_img, mask = next(iter(test_dl))
+        recon_img, gt_img, mask, _ = next(iter(test_dl))
 
     else:
         # Process input image to (1, H, W)
-        recon_img, gt_img, mask = process_input_img(
+        recon_img, gt_img, mask, _ = process_input_img(
             args.scene, args.i, args.zclip)
 
     if args.fill_imgs:

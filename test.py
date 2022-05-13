@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     losses_test = []
 
-    for recon_img, gt_img, mask in test_dl:
+    for recon_img, gt_img, mask, _ in test_dl:
         loss_test = evaluate(model, recon_img, gt_img, mask)
         losses_test.append(loss_test.item())
 

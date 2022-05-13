@@ -41,7 +41,6 @@ class TestsetNeuconDepths(Dataset):
 
     def compute_max_depth(self):
         print(f'Computing max depth value...')
-        print(f'This can take a while')
         for scene, n in self.all_imgs:
             depth_val1 = np.load(os.path.join(
                 self.path, scene, 'recon_max_depth', '{}.npy'.format(n))).max()
@@ -68,6 +67,8 @@ class TestsetNeuconDepths(Dataset):
         recon_depth = np.where(recon_depth > 1.0, 0.0, recon_depth)
         gt_depth /= self.zclip
         gt_depth = np.where(gt_depth > 1.0, 0.0, gt_depth)
+        color = Image.open(os.path.join(
+            self.path, scene, 'color', '{}.jpg'.format(n)))
 
         mask = np.where(recon_depth > 0.0, 0.0, 1.0)
-        return recon_depth, gt_depth, mask
+        return recon_depth, gt_depth, mask, color
