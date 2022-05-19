@@ -35,9 +35,13 @@ def offscreen_render(scene):
     scene_info = dict(np.loadtxt(
         f'{os.path.join(scene_path, scene)}.txt', delimiter=' = ', dtype=dict))
 
-    pyrender_path = os.path.join(scene_path, 'recon_depth')
-    if not os.path.exists(pyrender_path):
-        os.makedirs(pyrender_path)
+    # pyrender_path = os.path.join(scene_path, 'recon_max_depth')
+    # if not os.path.exists(pyrender_path):
+    #     os.makedirs(pyrender_path)
+
+    pcd_path = os.path.join(scene_path, 'pcd_depth')
+    if not os.path.exists(pcd_path):
+        os.makedirs(pcd_path)
 
     n_poses = int(scene_info['numDepthFrames'])
     width = int(scene_info['depthWidth'])
@@ -50,9 +54,10 @@ def offscreen_render(scene):
         scene_path, 'intrinsic/intrinsic_depth.txt'))
 
     # Load mesh and set correct campose.
-    mesh = trimesh.load(os.path.join(
+    mesh = trimesh.load_mesh(os.path.join(
         RECONPATH, '{}.ply'.format(scene)))
-    mesh = pyrender.Mesh.from_trimesh(mesh)
+    print(mesh)
+    # mesh = pyrender.Mesh.from_trimesh(mesh)
     rotation_x = np.array([[1,  0,  0, 0],
                            [0, -1,  0, 0],
                            [0,  0, -1, 0],
@@ -76,7 +81,7 @@ def offscreen_render(scene):
                 Scene.add(mesh)
                 # NeuralRecon is limited to a depth of 3 meters.
                 cam = pyrender.IntrinsicsCamera(
-                    cx=cx, cy=cy, fx=fx, fy=fy, zfar=3.0)
+                    cx=cx, cy=cy, fx=fx, fy=fy)
                 Scene.add(cam, pose=extrinsic_matrix@rotation_x)
                 flags = pyrender.constants.RenderFlags.DEPTH_ONLY
 
@@ -86,8 +91,12 @@ def offscreen_render(scene):
                 renderer.delete()
 
                 # Save depth as numpy array and image.
-                np.save(os.path.join(pyrender_path, '{}.npy'.format(n)), depth)
-                plt.imsave(os.path.join(pyrender_path,
+                # np.save(os.path.join(pyrender_path, '{}.npy'.format(n)), depth)
+                # plt.imsave(os.path.join(pyrender_path,
+                #                         '{}.png'.format(n)), depth)
+
+                np.save(os.path.join(pcd_path, '{}.npy'.format(n)), depth)
+                plt.imsave(os.path.join(pcd_path,
                                         '{}.png'.format(n)), depth)
 
             else:
