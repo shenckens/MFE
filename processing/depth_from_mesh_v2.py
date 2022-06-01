@@ -39,7 +39,11 @@ def offscreen_render(scene):
     # if not os.path.exists(pyrender_path):
     #     os.makedirs(pyrender_path)
 
-    pcd_path = os.path.join(scene_path, 'pcd_depth')
+    # pcd_path = os.path.join(scene_path, 'pcd_depth')
+    # if not os.path.exists(pcd_path):
+    #     os.makedirs(pcd_path)
+
+    pcd_path = os.path.join(scene_path, 'gt_pcd_depth')
     if not os.path.exists(pcd_path):
         os.makedirs(pcd_path)
 
@@ -55,9 +59,11 @@ def offscreen_render(scene):
 
     # Load mesh and set correct campose.
     mesh = trimesh.load_mesh(os.path.join(
-        RECONPATH, '{}.ply'.format(scene)))
+        scene_path, '{}_vh_clean.ply'.format(scene)))
     print(mesh)
-    # mesh = pyrender.Mesh.from_trimesh(mesh)
+    pts = mesh.vertices.copy()
+    print(pts)
+    mesh = pyrender.Mesh.from_points(pts)
     rotation_x = np.array([[1,  0,  0, 0],
                            [0, -1,  0, 0],
                            [0,  0, -1, 0],
